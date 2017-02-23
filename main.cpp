@@ -21,6 +21,8 @@ vector<vec2> control;
 float cRadius = 0.01f;
 int selected = -1;
 
+float u_Step = 0.001;
+
 
 void render () {
 	glEnable (GL_DEPTH_TEST);
@@ -50,6 +52,7 @@ void render () {
 	glColor3f (0.0f, 1.0f, 0.0f);
 	glVertex2f (0.5f, 0.0f);
 	*/
+
 	for (int i = 0; i < control.size(); i++)
 	{
 		glVertex2f(control[i].x + cRadius, control[i].y + cRadius);
@@ -74,6 +77,16 @@ void render () {
 void keyboard (GLFWwindow *sender, int key, int scancode, int action, int mods) {
 	if (key == GLFW_KEY_A && (action == GLFW_PRESS || action == GLFW_REPEAT))
 		cout << "A was pressed.\n";
+
+	if (key == GLFW_KEY_K && (action == GLFW_PRESS))
+	{
+		bsplineGeometry->decraseK();
+		bsplineGeometry->generateGraph(u_Step);
+	} else if (key == GLFW_KEY_L && action == GLFW_PRESS)
+	{
+		bsplineGeometry->increaseK();
+		bsplineGeometry->generateGraph(u_Step);
+	}
 }
 
 void mouseClick (GLFWwindow *sender, int button, int action, int mods) {
@@ -97,13 +110,13 @@ void mouseClick (GLFWwindow *sender, int button, int action, int mods) {
 
 
 	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-		//cout << mouseX << ' ' << mouseY << '\n';
+		cout << mouseX << ' ' << mouseY << '\n';
 		if (selected == -1)
 		{
 				control.push_back(vec2(x,y));
 				//add the control point to the bsplineGeometry
 				bsplineGeometry->addControlPoint(vec3(x,y,0));
-				bsplineGeometry->generateGraph(0.001);
+				bsplineGeometry->generateGraph(u_Step);
 		}
 	}
 
@@ -113,7 +126,7 @@ void mouseClick (GLFWwindow *sender, int button, int action, int mods) {
 		{
 			control.erase(control.begin() + selected);
 			bsplineGeometry->deleteControlPoint(selected);
-			bsplineGeometry->generateGraph(0.001);
+			bsplineGeometry->generateGraph(u_Step);
 			//remove the control point from the bsplineGeometry
 			selected = -1;
 		}
@@ -138,7 +151,7 @@ void mousePos (GLFWwindow *sender, double x, double y) {
 
 		//move the point from the bsplineGeometry
 		bsplineGeometry->moveControlPoint(vec3(x_screen,y_screen,0), selected);
-		bsplineGeometry->generateGraph(0.001);
+		bsplineGeometry->generateGraph(u_Step);
 	}
 
   //bsplineGeometry->generateGraph();
@@ -150,7 +163,7 @@ int main () {
 		return 1;
 
 	window = glfwCreateWindow (640, 480, "My Window", NULL, NULL);
-	bsplineGeometry = new BSplineGenerator(4);
+	bsplineGeometry = new BSplineGenerator(5);
 	if (!window)
 		return 1;
 

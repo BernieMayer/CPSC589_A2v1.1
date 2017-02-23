@@ -21,6 +21,8 @@ public:
                      vector <float> knotSequence);
 
     vector<vec3> getControlPoints();
+    void decraseK();
+    void increaseK();
     int getNumberOfControlPoints();
 
     void addControlPoint(vec3 aPoint);
@@ -44,6 +46,9 @@ private:
     void makeKnotSequence();
     vector<vec3> controlPoints;
     vector<float> knotSequence;
+
+    vec3  S(float u, int k, int m);
+    float N(int i, int k, float u);
 
 
 
