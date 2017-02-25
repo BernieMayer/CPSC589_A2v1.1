@@ -117,6 +117,7 @@ void BSplineGenerator::decraseK()
 
 void BSplineGenerator::increaseK()
 {
+  printf("K is now %i \n", k);
   k = k + 1;
 }
 
@@ -137,69 +138,10 @@ int BSplineGenerator::delta(double u, int m, int k)
     return -1;
 }
 
-/*
-void generateE(double u, int m, int k)
-{
-  int delta = delta(u, m, k)
-
-  for (delta == -1 || (delta + k) > (controlPoints.size() - 1))
-  {
-    //fill E with 0's
-
-    return;
-  }
-
-  //fill the rest of the array with 0
-   // for delta to k -1
-
-   for (int i; i < k; i++)
-   {
-     E[delta + i] = 1;
-   }
-
-
-  /*
-  for (delta; delta < (delta - k + 2); delta--)
-  {
-    float omega = (u - knotSequence.at(delta))/(knotSequence.at(delta + k - 1)
-                                        - knotSequence.at(delta));
-    E[delta] = omega;
-    E[delta - 1] =
-  }
-
-  */
-
-
-
-  /*
-
-
-    for (delta to delta  - k + 2E delta--)
-    {
-      float omega = (u - knotSequence.at(delta))/(knotSequence.at(delta + k - 1)
-                                          - knotSequence.at(delta));
-
-      E[delta] = omega
-      E[delta - 1] = (1 - omega);
-    }
-    init an array to all 0's
-    for r == k to 2 r--
-    i = delta
-    if delta > sizeOfControlPoints || delta == -1
-      //fill E with 0's
-      for delta to delta - r + 2
-        E[i] = omega * E[i] + (1 - omega ) * E[i - 1]
-        i--;
-
-
-
-
-}
-*/
 
 vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
 {
-    geometryData.clear();
+
     int d = delta(u, m,k);  //determines the delta..
     vector<vec3> c;
     int i;
@@ -221,14 +163,11 @@ vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
     //printf("d is %i \n", d);
     for (i = 0; i < k; i++){
         //printf("d -i is %i \n", (d - i));
-      
+
         c.push_back(controlPoints.at((d - i)));
     }
 
-    for (int l = 0; l < c.size(); l++)
-    {
-      geometryData.push_back(c.at(l));
-    }
+
 
 
     //cout << "Done adding key control points to c \n";
@@ -237,22 +176,30 @@ vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
     {
       i = d;
       //cout << "about to fix special control point \n";
+      std::vector<vec3> level;
         for (int s = 0; s <= (r - 2); s++){
             float omega = (u - knotSequence.at(i))/(knotSequence.at(i + r - 1)
                                                   - knotSequence.at(i));
 
-
-
-
+            if (s == 0) {
+              addPointToGeometry(c.at(s), k - r);
+              addPointToGeometry(c.at(s + 1), k -r);
+          }
 
             c.at(s) = omega * c.at(s) + (1 - omega) * c.at(s + 1);
             i = i - 1;
         }
+
     }
 
-
+    //printf("geometryData is %i by %i \n", geometryData.size(), geometryData.at(0).size());
 
     return c[0];
+
+}
+
+void  BSplineGenerator::addPointToGeometry(vec3 aPoint, int level)
+{
 
 }
 
@@ -284,6 +231,7 @@ float  BSplineGenerator::N(int i, int k, float u)
 void BSplineGenerator::generateGraph(double u_step)
 {
   graphData.clear();
+  geometryData.clear();
   makeKnotSequence();
   if (controlPoints.size() <= k)
     return;
@@ -297,6 +245,18 @@ void BSplineGenerator::generateGraph(double u_step)
         //graphData.push_back(point * 0.5f + graphData.at(graphData.size() - 1) * 0.5f);
         u += u_step;
    }
+
+
+
+   for (int l = 0; l < controlPoints.size(); l++)
+   {
+     geometryData.push_back(controlPoints.at(l));
+   }
+
+
+   
+
+
 
    //printf("graphData has a size of %i \n", graphData.size());
 }

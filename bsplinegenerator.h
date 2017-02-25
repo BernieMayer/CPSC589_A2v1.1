@@ -51,6 +51,8 @@ private:
     vec3  S(float u, int k, int m);
     float N(int i, int k, float u);
 
+    void addPointToGeometry(vec3 aPoint, int level);
+
 
 
 

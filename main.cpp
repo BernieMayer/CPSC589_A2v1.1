@@ -78,6 +78,7 @@ void render () {
 
 	if (geometryMode)
 	{
+
 		glBegin(GL_LINE_STRIP);
 		for (int i = 0; i < bsplineGeometry->geometryData.size(); i++)
 		{
@@ -86,6 +87,7 @@ void render () {
 			glVertex2f(vector.x, vector.y);
 		}
 		glEnd();
+
 
 	}
 }
@@ -103,6 +105,9 @@ void keyboard (GLFWwindow *sender, int key, int scancode, int action, int mods) 
 	{
 		bsplineGeometry->increaseK();
 		bsplineGeometry->generateGraph(u_Step);
+	} else if (key == GLFW_KEY_G && action == GLFW_PRESS)
+	{
+		geometryMode = !geometryMode;
 	}
 }
 
