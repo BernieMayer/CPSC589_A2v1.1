@@ -41,7 +41,7 @@ void  BSplineGenerator::makeKnotSequence()
   knotSequence.clear();
   if ( controlPoints.size() <= k) return;
   int i = 0;
-  for (i = 0; i < k; i++)
+  for (i = 0; i < (k); i++)
   {
     knotSequence.push_back(0.0f);
   }
@@ -56,7 +56,7 @@ void  BSplineGenerator::makeKnotSequence()
   }
 
 
-  for (i = 0 ; i < k; i++)
+  for (i = 0 ; i < (k); i++)
   {
     knotSequence.push_back(1.0f);
   }
@@ -105,11 +105,12 @@ void BSplineGenerator::moveControlPoint(vec3 aPoint, int index)
 
 void BSplineGenerator::decraseK()
 {
-  if (k == 1)
+  if (k <= 2)
   {
     return;
   } else {
     k = k -1;
+    printf("K is now %i \n", k );
   }
 }
 
@@ -125,7 +126,7 @@ int BSplineGenerator::delta(double u, int m, int k)
     {
       //cout << " i is  " << i << "\n";
 
-      if (u >= knotSequence.at(i) || u < knotSequence.at(i + 1))
+      if (u >= knotSequence.at(i) && u < knotSequence.at(i + 1))
       {
           //printf("delta is not -1 \n");
           return i;
@@ -198,6 +199,7 @@ void generateE(double u, int m, int k)
 
 vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
 {
+    geometryData.clear();
     int d = delta(u, m,k);  //determines the delta..
     vector<vec3> c;
     int i;
@@ -209,35 +211,46 @@ vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
       d = d - 1;
 
     }
-     if ( (d - k) < 0)
+
+     if ( (d - (k -1)) < 0)
     {
-     d = k - 1;
+      d = k - 2;
     }
 
     //cout << "About to add key control points \n";
     //printf("d is %i \n", d);
-    for (i = 0; i < (k -1); i++){
+    for (i = 0; i < k; i++){
         //printf("d -i is %i \n", (d - i));
+      
         c.push_back(controlPoints.at((d - i)));
+    }
+
+    for (int l = 0; l < c.size(); l++)
+    {
+      geometryData.push_back(c.at(l));
     }
 
 
     //cout << "Done adding key control points to c \n";
 
-    for (int r = k; r > 2; r--)
+    for (int r = k; r > 1; r--)
     {
       i = d;
       //cout << "about to fix special control point \n";
-        for (int s = 0; s <(r - 2); s++){
-
+        for (int s = 0; s <= (r - 2); s++){
             float omega = (u - knotSequence.at(i))/(knotSequence.at(i + r - 1)
                                                   - knotSequence.at(i));
+
+
+
 
 
             c.at(s) = omega * c.at(s) + (1 - omega) * c.at(s + 1);
             i = i - 1;
         }
     }
+
+
 
     return c[0];
 

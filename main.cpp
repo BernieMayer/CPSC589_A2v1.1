@@ -23,6 +23,8 @@ int selected = -1;
 
 float u_Step = 0.001;
 
+bool geometryMode = true;
+
 
 void render () {
 	glEnable (GL_DEPTH_TEST);
@@ -55,6 +57,7 @@ void render () {
 
 	for (int i = 0; i < control.size(); i++)
 	{
+		glColor3f(0.0f, 0.9f, 0.0);
 		glVertex2f(control[i].x + cRadius, control[i].y + cRadius);
 		glVertex2f(control[i].x + cRadius, control[i].y - cRadius);
 		glVertex2f(control[i].x - cRadius, control[i].y - cRadius);
@@ -63,14 +66,28 @@ void render () {
 	}
 	glEnd ();
 
+
 	glBegin(GL_LINE_STRIP);
 	for (int i = 0; i < bsplineGeometry->graphData.size(); i++)
 	{
+		glColor3f(1.0f, 1.0f, 1.0f);
 		glm::vec3 vector = bsplineGeometry->graphData.at(i);
 		glVertex2f(vector.x, vector.y);
 	}
 	glEnd();
 
+	if (geometryMode)
+	{
+		glBegin(GL_LINE_STRIP);
+		for (int i = 0; i < bsplineGeometry->geometryData.size(); i++)
+		{
+			glColor3f(1.0f, 0.0f, 0.0f);
+			glm::vec3 vector = bsplineGeometry->geometryData.at(i);
+			glVertex2f(vector.x, vector.y);
+		}
+		glEnd();
+
+	}
 }
 
 
@@ -163,7 +180,7 @@ int main () {
 		return 1;
 
 	window = glfwCreateWindow (640, 480, "My Window", NULL, NULL);
-	bsplineGeometry = new BSplineGenerator(5);
+	bsplineGeometry = new BSplineGenerator(3);
 	if (!window)
 		return 1;
 

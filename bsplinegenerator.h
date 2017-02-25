@@ -39,6 +39,7 @@ public:
 
     vector<vec3> graphData;
     int selected = -1;
+    vector<vec3> geometryData;
 private:
     int k; //order of the curve
     double u_inc; //User control over incrementation
