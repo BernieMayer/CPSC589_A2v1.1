@@ -44,6 +44,10 @@ public:
     vector<vector<vec3>> geometryData;
 
     bool generateGeometricData = false;
+
+    vec3 pointOfInterest;
+
+    bool debug = false;
 private:
     int k; //order of the curve
     double u_inc; //User control over incrementation

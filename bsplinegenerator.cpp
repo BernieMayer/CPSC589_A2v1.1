@@ -46,7 +46,7 @@ void  BSplineGenerator::makeKnotSequence()
     knotSequence.push_back(0.0f);
   }
 
-  float step = (1.0f)/(controlPoints.size() - k + 2);
+  float step = (1.0f)/(controlPoints.size() - k + 1);
   float current_step = step;
   for (i = 0; i < (controlPoints.size() - k + 1); i++)
   {
@@ -65,7 +65,7 @@ void  BSplineGenerator::makeKnotSequence()
 
   if (k <= controlPoints.size())
   {
-    debug = false;
+    debug = true;
   }
   if (debug)
   {
@@ -143,6 +143,8 @@ int BSplineGenerator::delta(double u, int m, int k)
 
 vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
 {
+    if (debug)
+      printf("u is %f \n", u);
 
     int d = delta(u, m,k);  //determines the delta..
     vector<vec3> c;
@@ -156,26 +158,40 @@ vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
 
     }
 
-     if ( (d - (k -1)) < 0)
+     if ( (d - k) < 0)
     {
-      d = k - 2;
+      d = k - 1;
     }
 
+    if (debug)
+    {
+      printf("d is  %i \n" ,d);
+    }
     //cout << "About to add key control points \n";
     //printf("d is %i \n", d);
     for (i = 0; i < k; i++){
         //printf("d -i is %i \n", (d - i));
 
         c.push_back(controlPoints.at((d - i)));
+
+        if (debug)
+        {
+          printf("Added point %i \n", (d - i));
+        }
     }
-    for (int r = k; r > 1; r--)
+    for (int r = k; r >= 2; r--)
     {
+      if (debug)
+      {
+        printf("r is %i \n", r);
+      }
       i = d;
       //cout << "about to fix special control point \n";
       std::vector<vec3> level;
-        for (int s = 0; s <= (r - 2); s++){
+        for (int s = 0; s < (r - 1); s++){
             float omega = (u - knotSequence.at(i))/(knotSequence.at(i + r - 1)
                                                   - knotSequence.at(i));
+
 
 
             if (generateGeometricData)
@@ -184,6 +200,10 @@ vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
                 level.push_back(c.at(s + 1));
             }
 
+            if (debug)
+            {
+              printf("s is %i omega is %f \n", s, omega);
+            }
             c.at(s) = omega * c.at(s) + (1 - omega) * c.at(s + 1);
             i = i - 1;
         }
@@ -204,7 +224,7 @@ void BSplineGenerator::generateGeometryModeData(double u)
   generateGeometricData = true;
   if ( u > 1.0f || u < 0.0f)
     return;
-  vec3 aPoint = E_delta_1(u, controlPoints.size(), k);
+  pointOfInterest = E_delta_1(u, controlPoints.size(), k);
   generateGeometricData = false;
 }
 

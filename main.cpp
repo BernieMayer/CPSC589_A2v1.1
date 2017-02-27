@@ -100,7 +100,21 @@ void render () {
 			glVertex2f(vector.x, vector.y);
 		}
 		glEnd();
+
+		glBegin(GL_QUADS);
+
+		glPointSize( 10.0f);
+		glColor3f(1.0f, 0.7f, 0.0f);
+		glm::vec3 aPoint = bsplineGeometry->pointOfInterest;
+		glVertex2f(aPoint.x + cRadius, aPoint.y + cRadius);
+		glVertex2f(aPoint.x + cRadius, aPoint.y - cRadius);
+		glVertex2f(aPoint.x - cRadius, aPoint.y - cRadius);
+		glVertex2f(aPoint.x - cRadius, aPoint.y + cRadius);
+
+		glEnd();
 }
+
+
 
 	}
 }
@@ -154,15 +168,25 @@ void keyboard (GLFWwindow *sender, int key, int scancode, int action, int mods) 
 		geom_u += 0.05;
 		geometryMode = true;
 
+		bsplineGeometry->debug = true;
 		bsplineGeometry->generateGeometryModeData(geom_u);
+		bsplineGeometry->debug = false;
 
 	} else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
 	{
 	 geom_u -= 0.05;
 	 geometryMode = true;
 
+	 bsplineGeometry->debug = true;
 	 bsplineGeometry->generateGeometryModeData(geom_u);
-	}
+	 bsplineGeometry->debug = false;
+ } else if (key == GLFW_KEY_D && action == GLFW_PRESS)
+ {
+	 bsplineGeometry->debug = true;
+
+	 bsplineGeometry->generateGeometryModeData(0.95f);
+	 bsplineGeometry->debug = false;
+ }
 
 
 }
