@@ -37,9 +37,13 @@ public:
     void generateGraph(double u_step);
     void generateGraph();
 
+    void generateGeometryModeData(double u);
+
     vector<vec3> graphData;
     int selected = -1;
-    vector<vec3> geometryData;
+    vector<vector<vec3>> geometryData;
+
+    bool generateGeometricData = false;
 private:
     int k; //order of the curve
     double u_inc; //User control over incrementation

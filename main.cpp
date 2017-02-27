@@ -22,6 +22,7 @@ float cRadius = 0.01f;
 int selected = -1;
 
 float u_Step = 0.001;
+double geom_u = 0.5f;
 
 bool geometryMode = true;
 
@@ -78,16 +79,28 @@ void render () {
 
 	if (geometryMode)
 	{
-
-		glBegin(GL_LINE_STRIP);
-		for (int i = 0; i < bsplineGeometry->geometryData.size(); i++)
+		for (int k = 0; k < bsplineGeometry->geometryData.size(); k++)
 		{
+		glBegin(GL_LINE_STRIP);
+		for (int i = 0; i < bsplineGeometry->geometryData.at(k).size(); i++)
+		{
+			if (k % 3 == 0)
+			{
 			glColor3f(1.0f, 0.0f, 0.0f);
-			glm::vec3 vector = bsplineGeometry->geometryData.at(i);
+		} else if ( k % 3 == 1)
+		{
+			glColor3f(1.0f, 0.5f, 0.0f);
+		} else if (k % 3 == 2)
+		{
+			glColor3f(1.0f, 0.0f, 0.5f);
+		} else {
+			glColor3f(1.0f, 0.5f, 0.5f);
+		}
+			glm::vec3 vector = bsplineGeometry->geometryData.at(k).at(i);
 			glVertex2f(vector.x, vector.y);
 		}
 		glEnd();
-
+}
 
 	}
 }
@@ -108,7 +121,50 @@ void keyboard (GLFWwindow *sender, int key, int scancode, int action, int mods) 
 	} else if (key == GLFW_KEY_G && action == GLFW_PRESS)
 	{
 		geometryMode = !geometryMode;
+		bsplineGeometry->generateGeometryModeData(geom_u);
+	} else if (key == GLFW_KEY_U && action == GLFW_PRESS)
+	{
+		std::cout<< "Enter the value for u increment \n";
+
+		float u_inc_temp;
+		std::cin >> u_inc_temp;
+		u_Step= u_inc_temp;
+		bsplineGeometry->generateGraph(u_Step);
 	}
+	else if (key == GLFW_KEY_I && action == GLFW_PRESS)
+	{
+		 u_Step = u_Step + 0.05;
+
+		bsplineGeometry->generateGraph(u_Step);
+	} else if (key == GLFW_KEY_O && action == GLFW_PRESS)
+	{
+		if (u_Step > 0.05)
+		{
+			u_Step = u_Step - 0.05;
+		} else
+		{
+			u_Step = 0.04;
+		}
+		bsplineGeometry->generateGraph(u_Step);
+	} else if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
+		glfwSetWindowShouldClose(window, GL_TRUE);
+	} else if (key == GLFW_KEY_LEFT && action == GLFW_PRESS)
+	{
+		geom_u += 0.05;
+		geometryMode = true;
+
+		bsplineGeometry->generateGeometryModeData(geom_u);
+
+	} else if (key == GLFW_KEY_RIGHT && action == GLFW_PRESS)
+	{
+	 geom_u -= 0.05;
+	 geometryMode = true;
+
+	 bsplineGeometry->generateGeometryModeData(geom_u);
+	}
+
+
 }
 
 void mouseClick (GLFWwindow *sender, int button, int action, int mods) {

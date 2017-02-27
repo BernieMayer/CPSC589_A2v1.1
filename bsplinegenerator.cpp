@@ -139,6 +139,8 @@ int BSplineGenerator::delta(double u, int m, int k)
 }
 
 
+
+
 vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
 {
 
@@ -166,12 +168,6 @@ vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
 
         c.push_back(controlPoints.at((d - i)));
     }
-
-
-
-
-    //cout << "Done adding key control points to c \n";
-
     for (int r = k; r > 1; r--)
     {
       i = d;
@@ -181,14 +177,18 @@ vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
             float omega = (u - knotSequence.at(i))/(knotSequence.at(i + r - 1)
                                                   - knotSequence.at(i));
 
-            if (s == 0) {
-              addPointToGeometry(c.at(s), k - r);
-              addPointToGeometry(c.at(s + 1), k -r);
-          }
+
+            if (generateGeometricData)
+            {
+                level.push_back(c.at(s));
+                level.push_back(c.at(s + 1));
+            }
 
             c.at(s) = omega * c.at(s) + (1 - omega) * c.at(s + 1);
             i = i - 1;
         }
+
+        geometryData.push_back(level);
 
     }
 
@@ -197,6 +197,17 @@ vec3 BSplineGenerator::E_delta_1(double u, int m, int k)
     return c[0];
 
 }
+
+void BSplineGenerator::generateGeometryModeData(double u)
+{
+  geometryData.clear();
+  generateGeometricData = true;
+  if ( u > 1.0f || u < 0.0f)
+    return;
+  vec3 aPoint = E_delta_1(u, controlPoints.size(), k);
+  generateGeometricData = false;
+}
+
 
 void  BSplineGenerator::addPointToGeometry(vec3 aPoint, int level)
 {
@@ -236,6 +247,7 @@ void BSplineGenerator::generateGraph(double u_step)
   if (controlPoints.size() <= k)
     return;
    double u = 0;
+   vec3 testPoint = E_delta_1(0.01f, controlPoints.size(), k);
    while( u < 1)
    {
 
@@ -248,13 +260,9 @@ void BSplineGenerator::generateGraph(double u_step)
 
 
 
-   for (int l = 0; l < controlPoints.size(); l++)
-   {
-     geometryData.push_back(controlPoints.at(l));
-   }
 
 
-   
+
 
 
 
